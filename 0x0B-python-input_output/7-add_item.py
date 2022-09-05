@@ -21,4 +21,4 @@ for a in range(1, i):
     jsonList.append(sys.argv[a])
 
 save_to_json_file(jsonList, 'add_item.json')
-load_from_json_file('add_item.json')
+load_from_json_file('add_item.json'i)
