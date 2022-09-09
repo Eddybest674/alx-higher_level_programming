@@ -1,29 +1,25 @@
 #!/usr/bin/python3
-'''script for task 8'''
 
-from model_state import Base, State
+'''
+    Lists first state from DB.
+'''
+
+import sqlalchemy
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.pool import NullPool
-import sys
+from sys import argv
+from model_state import Base, State
 
-
-if __name__ == '__main__':
-    username = sys.argv[1]
-    password = sys.argv[2]
-    db_name = sys.argv[3]
-    host = 'localhost'
-    port = '3306'
-
-    engine = create_engine('mysql+mysqldb://{}:{}@{}:{}/{}'.format(
-                           username, password, host, port, db_name),
-                           pool_pre_ping=True, poolclass=NullPool)
-    Session = sessionmaker(bind=engine)
-    local_session = Session()
-    result = local_session.query(State).order_by(State.id).first()
-    local_session.close()
-
-    if result:
-        print('{}: {}'.format(result.id, result.name))
+if __name__ == "__main__":
+    eng = create_engine('mysql+mysqldb://{}:{}@localhost/{}'.format(argv[1],
+                                                                    argv[2],
+                                                                    argv[3]))
+    Base.metadata.create_all(eng)
+    Session = sessionmaker(bind=eng)
+    session = Session()
+    first_state = session.query(State).order_by(State.id).first()
+    if first_state is not None:
+        print("{}: {}".format(first_state.id, first_state.name))
     else:
-        print('Nothing')
+        print("Nothing")
+    session.close()
